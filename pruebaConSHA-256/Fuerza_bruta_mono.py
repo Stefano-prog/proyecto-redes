@@ -25,7 +25,7 @@ def main():
         objetivo = f.read().strip().lower()
     print("Hash objetivo:", objetivo)
     # Charset por defecto: letras minusculas + digitos. Ajusta si quieres.
-    charset = string.ascii_lowercase + string.ascii_uppercase + string.digits
+    charset = string.ascii_lowercase #+ string.ascii_uppercase + string.digits
     print("Charset:", charset)
     max_len = int(input("Longitud máxima a probar (ej 4): ").strip())
     print("Comenzando (puede tardar)...")

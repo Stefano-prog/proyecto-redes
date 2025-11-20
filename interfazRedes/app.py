@@ -16,12 +16,6 @@ def md5_hex_bytes(b):
 def sha256_hex_bytes(b):
     return hashlib.sha256(b).hexdigest()
 
-def leer_hash_desde_archivo(ruta="guardarHashes.txt"):
-    if not os.path.exists(ruta):
-        raise FileNotFoundError(f"Archivo no encontrado: {ruta}")
-    with open(ruta, "r", encoding="utf-8") as f:
-        return f.read().strip().lower()
-
 def probar_chunk(args):
     """
     Función que se ejecuta en cada proceso.
@@ -125,6 +119,63 @@ def fuerza_bruta_simple(objetivo_hex, charset, max_len, algoritmo='md5'):
 def main():
     return render_template('index.html', num_cores=cpu_count())
 
+@app.route('/generar', methods=['POST'])
+def generar_hash():
+    """
+    Endpoint para generar hashes desde un texto
+    """
+    try:
+        data = request.get_json()
+        texto = data['texto']
+        algoritmo = data.get('algoritmo', 'md5')
+        incluir_timestamp = data.get('incluir_timestamp', False)
+        
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Hash normal (sin timestamp)
+        texto_bytes = texto.encode('utf-8')
+        if algoritmo == 'md5':
+            hash_normal = md5_hex_bytes(texto_bytes)
+        elif algoritmo == 'sha256':
+            hash_normal = sha256_hex_bytes(texto_bytes)
+        else:
+            return jsonify({'error': 'Algoritmo no soportado'}), 400
+        
+        # Hash con timestamp (si está habilitado)
+        hash_con_timestamp = None
+        texto_con_timestamp = None
+        if incluir_timestamp:
+            texto_con_timestamp = f"{texto}_{timestamp}"
+            texto_timestamp_bytes = texto_con_timestamp.encode('utf-8')
+            if algoritmo == 'md5':
+                hash_con_timestamp = md5_hex_bytes(texto_timestamp_bytes)
+            elif algoritmo == 'sha256':
+                hash_con_timestamp = sha256_hex_bytes(texto_timestamp_bytes)
+        
+        print(f"\n=== Hash Generado ===")
+        print(f"Texto: {texto}")
+        print(f"Algoritmo: {algoritmo.upper()}")
+        print(f"Hash normal: {hash_normal}")
+        if incluir_timestamp:
+            print(f"Texto con timestamp: {texto_con_timestamp}")
+            print(f"Hash con timestamp: {hash_con_timestamp}")
+        print(f"Timestamp: {timestamp}")
+        
+        return jsonify({
+            'texto': texto,
+            'algoritmo': algoritmo.upper(),
+            'hash': hash_normal,
+            'timestamp': timestamp,
+            'longitud': len(hash_normal),
+            'incluir_timestamp': incluir_timestamp,
+            'texto_con_timestamp': texto_con_timestamp,
+            'hash_con_timestamp': hash_con_timestamp
+        })
+        
+    except Exception as e:
+        print(f"❌ Error al generar hash: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/crack', methods=['POST'])
 def crack():
     try:
@@ -195,3 +246,5 @@ def crack():
 if __name__ == "__main__":
     print(f"💻 CPU disponibles: {cpu_count()} núcleos")
     app.run(debug=True, host='0.0.0.0', port=5000)
+
+#prueba que se guardo

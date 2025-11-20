@@ -170,6 +170,19 @@
             font-size: 0.9em;
         }
 
+        .timestamp-box {
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: #666;
+        }
+
+        .timestamp-box strong {
+            color: #333;
+        }
+
         small {
             color: #666;
             font-size: 0.85em;
@@ -211,8 +224,8 @@
             <div class="form-group">
                 <label for="maxLen">Longitud máxima:</label>
                 <input type="number" id="maxLen" name="maxLen" 
-                       min="1" max="6" value="4" required>
-                <small>Recomendado: máximo 5 para evitar tiempos largos</small>
+                       min="1" value="4" required>
+                <small>⚠️ Longitudes mayores a 6 pueden tardar mucho tiempo</small>
             </div>
             
             <div class="form-group">
@@ -303,11 +316,14 @@
                         <div class="result-details">
                             <strong>Algoritmo:</strong> ${data.algoritmo}<br>
                             <strong>Modo:</strong> ${data.modo}<br>
-                            <strong>Texto original:</strong> ${data.texto}<br>
+                            <strong>Texto original:</strong> <span style="font-family: monospace; background: #fff3cd; padding: 2px 8px; border-radius: 4px;">${data.texto}</span><br>
                             <strong>Intentos:</strong> ${data.intentos.toLocaleString()}<br>
                             <strong>Tiempo:</strong> ${data.tiempo.toFixed(2)} segundos<br>
-                            <strong>Inicio:</strong> ${data.timestamp_inicio}<br>
-                            <strong>Fin:</strong> ${data.timestamp_fin}
+                            <div class="timestamp-box">
+                                <strong>⏰ Timestamps:</strong><br>
+                                🟢 Inicio: ${data.timestamp_inicio}<br>
+                                🔴 Fin: ${data.timestamp_fin}
+                            </div>
                         </div>
                     `;
                 } else {
@@ -319,8 +335,12 @@
                             <strong>Modo:</strong> ${data.modo}<br>
                             <strong>Intentos realizados:</strong> ${data.intentos.toLocaleString()}<br>
                             <strong>Tiempo:</strong> ${data.tiempo.toFixed(2)} segundos<br>
-                            <strong>Inicio:</strong> ${data.timestamp_inicio}<br>
-                            <strong>Fin:</strong> ${data.timestamp_fin}<br><br>
+                            <div class="timestamp-box">
+                                <strong>⏰ Timestamps:</strong><br>
+                                🟢 Inicio: ${data.timestamp_inicio}<br>
+                                🔴 Fin: ${data.timestamp_fin}
+                            </div>
+                            <br>
                             Prueba aumentando la longitud máxima o el charset.
                         </div>
                     `;
